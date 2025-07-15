@@ -15,6 +15,7 @@ public class NextQuestionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
+        boolean isWrongAnswer = Boolean.parseBoolean(req.getParameter("isWrong"));
 
         if(session.getAttribute("mistakesDone") == null) {
             session.setAttribute("mistakesDone", 0);
@@ -22,12 +23,10 @@ public class NextQuestionServlet extends HttpServlet {
 
         int nextQuestion = gettingNextQuestionIndex(req, resp);
 
-        if (nextQuestion == -1 && session.getAttribute("lives") != "DEAD") {
+        if (nextQuestion == -1 && session.getAttribute("lives") != "DEAD" && !isWrongAnswer) {
             resp.sendRedirect("quest-completed.jsp");
             return;
         }
-
-        boolean isWrongAnswer = Boolean.parseBoolean(req.getParameter("isWrong"));
 
         if (isWrongAnswer && session.getAttribute("mistakesDone") != null) {
             int mistakesDone = (int) session.getAttribute("mistakesDone");
